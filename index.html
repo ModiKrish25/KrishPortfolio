@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModiKrish | 3D Experience</title>
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💻</text></svg>">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Three.js for 3D Background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        /* 1. RESET & CORE SETTINGS */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            font-family: 'Urbanist', sans-serif;
+            overflow-x: hidden;
+            perspective: 1000px; /* Enable 3D space */
+            transition: filter 0.5s ease;
+        }
+
+        /* Black & White Mode Class */
+        body.bw-mode {
+            filter: grayscale(100%) contrast(1.2);
+        }
+
+        /* 2. 3D BACKGROUND CANVAS */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            /* Gradient overlay to make text readable */
+            background: radial-gradient(circle at center, transparent 0%, #000 100%);
+        }
+
+        /* 3. NAVBAR STYLES */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(5, 5, 5, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .nav-links a:hover {
+            color: #3b82f6;
+            transform: scale(1.1);
+        }
+
+        /* Toggle Button */
+        .bw-toggle {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bw-toggle:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* 4. MAIN CONTAINER & SCROLL */
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 120px;
+            padding: 120px 20px 50px; /* Added top padding for navbar */
+            transform-style: preserve-3d;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 5. 3D CARD STYLES */
+        .slide-card {
+            background: rgba(30, 41, 59, 0.4); /* Glassmorphism */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            width: 100%;
+            padding: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 50px;
+            
+            /* 3D Properties */
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out, box-shadow 0.3s ease;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            
+            /* Initial Animation State */
+            opacity: 0;
+            transform: translateY(100px) scale(0.9);
+        }
+
+        .slide-card.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Hover Glow */
+        .slide-card:hover {
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        /* PROJECT GRID SECTION */
+        .projects-section {
+            width: 100%;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease-out;
+        }
+        
+        .projects-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-title {
+            font-size: 50px;
+            font-weight: 700;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 40px;
+            width: 100%;
+        }
+
+        /* Modify slide-card for grid use */
+        .project-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column; /* Stack content vertically in grid */
+            align-items: center;
+            text-align: center;
+            gap: 30px;
+            min-height: 450px;
+            justify-content: space-between;
+            
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out, box-shadow 0.3s ease;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .project-card:hover {
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+            border-color: rgba(59, 130, 246, 0.5);
+            z-index: 10;
+        }
+
+        /* 6. TYPOGRAPHY & CONTENT */
+        .content-side {
+            flex: 1;
+            transform: translateZ(30px); /* Lift text off the card */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        /* Center content for specific cards */
+        .project-card .content-side,
+        #contact .content-side,
+        #projects .content-side {
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 80px;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        h2 {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            font-size: 24px;
+            color: #3b82f6;
+            margin-bottom: 10px;
+        }
+
+        p, li {
+            font-size: 18px;
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .highlight {
+            color: #3b82f6;
+            font-weight: bold;
+        }
+
+        /* NEW BUTTON STYLES */
+        .cta-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            margin-top: 20px;
+            background: rgba(59, 130, 246, 0.1);
+            color: #fff;
+            border: 1px solid #3b82f6;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+        }
+
+        .cta-btn:hover {
+            transform: scale(1.1); /* Hover enlarge effect */
+            background: #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+            color: #fff;
+        }
+
+        .cta-btn-alt {
+            border-color: #fff;
+            background: rgba(255,255,255,0.1);
+        }
+        .cta-btn-alt:hover {
+            background: #fff;
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        /* 7. PURE CSS 3D SHAPES */
+        .visual-side {
+            flex: 1;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1000px;
+            transform: translateZ(50px);
+        }
+        
+        /* Adjust visual side for project cards */
+        .project-card .visual-side {
+            height: 200px;
+            width: 100%;
+        }
+
+        /* The Cube Loader */
+        .cube-scene {
+            width: 120px;
+            height: 120px;
+            transform-style: preserve-3d;
+            animation: spin 8s infinite linear;
+        }
+
+        .cube-face {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border: 2px solid;
+            opacity: 0.7;
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: 0 0 20px inset;
+        }
+
+        /* Cube Positioning */
+        .face-front  { transform: rotateY(0deg) translateZ(60px); }
+        .face-back   { transform: rotateY(180deg) translateZ(60px); }
+        .face-right  { transform: rotateY(90deg) translateZ(60px); }
+        .face-left   { transform: rotateY(-90deg) translateZ(60px); }
+        .face-top    { transform: rotateX(90deg) translateZ(60px); }
+        .face-bottom { transform: rotateX(-90deg) translateZ(60px); }
+
+        @keyframes spin {
+            0% { transform: rotateX(0deg) rotateY(0deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg); }
+        }
+
+        /* Color Variations */
+        .blue-theme .cube-face { border-color: #3b82f6; color: #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2) inset; }
+        .green-theme .cube-face { border-color: #10b981; color: #10b981; box-shadow: 0 0 20px rgba(16, 185, 129, 0.2) inset; }
+        .orange-theme .cube-face { border-color: #f59e0b; color: #f59e0b; box-shadow: 0 0 20px rgba(245, 158, 11, 0.2) inset; }
+        .purple-theme .cube-face { border-color: #a855f7; color: #a855f7; box-shadow: 0 0 20px rgba(168, 85, 247, 0.2) inset; }
+
+        /* 8. TECH GRID */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+        }
+        .tech-item {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .tech-item:hover {
+            background: rgba(59, 130, 246, 0.2);
+            transform: translateZ(20px);
+        }
+        .tech-item i {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        /* 9. MOBILE RESPONSIVENESS */
+        @media (max-width: 900px) {
+            .navbar { padding: 15px 20px; }
+            .nav-links { display: none; } /* Could add hamburger menu later */
+            
+            .slide-card {
+                flex-direction: column-reverse;
+                padding: 30px;
+                min-height: auto;
+            }
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            .visual-side { height: 200px; }
+            h1 { font-size: 50px; }
+            .content-side { align-items: center; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Three.js Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="#" class="nav-logo">Modi<span class="highlight">Krish</span>.</a>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#projects">Projects</a>
+            <a href="#contact">Contact</a>
+            <!-- B&W Toggle -->
+            <button class="bw-toggle" onclick="toggleBWMode()">
+                <i class="fa-solid fa-circle-half-stroke"></i> B&W
+            </button>
+        </div>
+    </nav>
+
+    <div class="main-wrapper">
+        
+        <!-- Slide 1: Hero -->
+        <div id="home" class="slide-card js-tilt" style="min-height: 80vh;">
+            <div class="content-side">
+                <h1>Modi<span class="highlight">Krish</span>.</h1>
+                <p style="font-size: 24px; color: #fff;">Full Stack Developer</p>
+                <p>Building immersive digital experiences with Code, AI & Blockchain.</p>
+                <div style="margin-top: 30px;">
+                    <a href="#projects" class="cta-btn">View Work <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="visual-side">
+                <div class="cube-scene purple-theme">
+                    <div class="cube-face face-front"><i class="fa-solid fa-code"></i></div>
+                    <div class="cube-face face-back"><i class="fa-solid fa-terminal"></i></div>
+                    <div class="cube-face face-right"><i class="fa-solid fa-laptop-code"></i></div>
+                    <div class="cube-face face-left"><i class="fa-solid fa-network-wired"></i></div>
+                    <div class="cube-face face-top"></div>
+                    <div class="cube-face face-bottom"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: About -->
+        <div id="about" class="slide-card js-tilt">
+            <div class="content-side">
+                <h2>About <span class="highlight">Me</span></h2>
+                <p>I am a passionate developer transforming complex problems into elegant, 3D solutions. I specialize in building scalable web applications and integrating cutting-edge technologies.</p>
+                <ul style="list-style: none; margin-top: 20px; margin-bottom: 30px;">
+                    <li><i class="fa-solid fa-check highlight"></i> Modern Web Apps</li>
+                    <li><i class="fa-solid fa-check highlight"></i> AI & Machine Learning</li>
+                    <li><i class="fa-solid fa-check highlight"></i> Decentralized Tech</li>
+                </ul>
+                <a href="#contact" class="cta-btn cta-btn-alt">Contact Me</a>
+            </div>
+            <div class="visual-side">
+                <!-- An abstract structure of floating icons -->
+                <div style="font-size: 100px; color: #cbd5e1; transform: rotateZ(10deg);">
+                    <i class="fa-regular fa-user"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects Section (Grid Layout) -->
+        <div id="projects" class="projects-section visible-on-scroll">
+            <h2 class="section-title">Featured <span class="highlight">Projects</span></h2>
+            
+            <div class="projects-grid">
+                
+                <!-- Project 1: Newslytic -->
+                <div class="project-card js-tilt">
+                    <div class="visual-side">
+                        <div class="cube-scene blue-theme">
+                            <div class="cube-face face-front"><i class="fa-regular fa-newspaper"></i></div>
+                            <div class="cube-face face-back"><i class="fa-solid fa-rss"></i></div>
+                            <div class="cube-face face-right"><i class="fa-solid fa-chart-line"></i></div>
+                            <div class="cube-face face-left"><i class="fa-solid fa-globe"></i></div>
+                            <div class="cube-face face-top"></div>
+                            <div class="cube-face face-bottom"></div>
+                        </div>
+                    </div>
+                    <div class="content-side">
+                        <h2>Newslytic</h2>
+                        <h3>Dynamic News Aggregator</h3>
+                        <p>Real-time updates and analytics on trending topics. Built for speed and accuracy.</p>
+                        <p class="highlight">React • Node.js • NewsAPI</p>
+                        <a href="#" class="cta-btn" style="margin-top: auto;">View Code</a>
+                    </div>
+                </div>
+
+                <!-- Project 2: CoachAI -->
+                <div class="project-card js-tilt">
+                    <div class="visual-side">
+                        <div class="cube-scene green-theme">
+                            <div class="cube-face face-front"><i class="fa-solid fa-robot"></i></div>
+                            <div class="cube-face face-back"><i class="fa-solid fa-brain"></i></div>
+                            <div class="cube-face face-right"><i class="fa-solid fa-comment-dots"></i></div>
+                            <div class="cube-face face-left"><i class="fa-solid fa-notes-medical"></i></div>
+                            <div class="cube-face face-top"></div>
+                            <div class="cube-face face-bottom"></div>
+                        </div>
+                    </div>
+                    <div class="content-side">
+                        <h2>CoachAI</h2>
+                        <h3 style="color: #10b981;">Intelligent Assistant</h3>
+                        <p>AI-powered personal coaching providing tailored advice and progress tracking.</p>
+                        <p class="highlight" style="color: #10b981;">Python • TensorFlow • React</p>
+                        <a href="#" class="cta-btn" style="background: rgba(16, 185, 129, 0.1); border-color: #10b981; margin-top: auto;">View Code</a>
+                    </div>
+                </div>
+
+                <!-- Project 3: Crypto_Master -->
+                <div class="project-card js-tilt" style="grid-column: auto;">
+                    <div class="visual-side">
+                        <div class="cube-scene orange-theme">
+                            <div class="cube-face face-front"><i class="fa-brands fa-bitcoin"></i></div>
+                            <div class="cube-face face-back"><i class="fa-solid fa-coins"></i></div>
+                            <div class="cube-face face-right"><i class="fa-solid fa-wallet"></i></div>
+                            <div class="cube-face face-left"><i class="fa-solid fa-chart-pie"></i></div>
+                            <div class="cube-face face-top"></div>
+                            <div class="cube-face face-bottom"></div>
+                        </div>
+                    </div>
+                    <div class="content-side">
+                        <h2>Crypto_Master</h2>
+                        <h3 style="color: #f59e0b;">Market Dashboard</h3>
+                        <p>Comprehensive tracking for cryptocurrency prices, trends, and portfolio management.</p>
+                        <p class="highlight" style="color: #f59e0b;">CSS3 • JS • API fetch</p>
+                        <a href="#" class="cta-btn" style="background: rgba(245, 158, 11, 0.1); border-color: #f59e0b; margin-top: auto;">View Code</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Slide 6: Tech Stack -->
+        <div class="slide-card js-tilt">
+            <div class="content-side" style="text-align: center; width: 100%;">
+                <h2>Tech <span class="highlight">Arsenal</span></h2>
+                <div class="tech-grid">
+                    <div class="tech-item"><i class="fa-brands fa-html5" style="color: #e34f26;"></i><br>HTML5</div>
+                    <div class="tech-item"><i class="fa-brands fa-css3" style="color: #2965f1;"></i><br>CSS3</div>
+                    <div class="tech-item"><i class="fa-brands fa-js" style="color: #f7df1e;"></i><br>JS</div>
+                    <div class="tech-item"><i class="fa-brands fa-react" style="color: #61dafb;"></i><br>React</div>
+                    <div class="tech-item"><i class="fa-brands fa-node" style="color: #68a063;"></i><br>Node</div>
+                    <div class="tech-item"><i class="fa-brands fa-python" style="color: #3776ab;"></i><br>Python</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Contact -->
+        <div id="contact" class="slide-card js-tilt" style="justify-content: center; text-align: center; flex-direction: column;">
+            <div class="content-side">
+                <h2>Let's <span class="highlight">Connect</span></h2>
+                <a href="mailto:modikrish.lj.2023@gmail.com" class="cta-btn" style="font-size: 20px; padding: 15px 40px; margin-bottom: 30px;">Say Hello 👋</a>
+                <div style="display: flex; gap: 40px; font-size: 50px;">
+                    <a href="https://www.linkedin.com/in/modi-krish-9b944b341/" target="_blank" style="color: #fff; transition: 0.3s;" onmouseover="this.style.color='#0077b5'" onmouseout="this.style.color='#fff'"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="https://github.com/ModiKrish25" target="_blank" style="color: #fff; transition: 0.3s;" onmouseover="this.style.color='#333'" onmouseout="this.style.color='#fff'"><i class="fa-brands fa-github"></i></a>
+                    <a href="mailto:modikrish.lj.2023@gmail.com" style="color: #fff; transition: 0.3s;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#fff'"><i class="fa-solid fa-envelope"></i></a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // 0. B&W MODE TOGGLE
+        function toggleBWMode() {
+            document.body.classList.toggle('bw-mode');
+        }
+
+        // 1. THREE.JS BACKGROUND SETUP
+        const canvas = document.querySelector('#bg-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        // Create Stars
+        const starsGeometry = new THREE.BufferGeometry();
+        const starsCount = 2000;
+        const posArray = new Float32Array(starsCount * 3);
+
+        for(let i = 0; i < starsCount * 3; i++) {
+            // Spread stars randomly in 3D space
+            posArray[i] = (Math.random() - 0.5) * 1500; 
+        }
+
+        starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        const starsMaterial = new THREE.PointsMaterial({
+            size: 2,
+            color: 0x3b82f6, // Blue stars
+            transparent: true,
+            opacity: 0.8
+        });
+
+        const starMesh = new THREE.Points(starsGeometry, starsMaterial);
+        scene.add(starMesh);
+
+        camera.position.z = 500;
+
+        // Mouse Interaction
+        let mouseX = 0;
+        let mouseY = 0;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = event.clientX;
+            mouseY = event.clientY;
+        });
+
+        // Animation Loop
+        const animate = () => {
+            requestAnimationFrame(animate);
+
+            // Rotate starfield slowly
+            starMesh.rotation.y += 0.0005;
+            starMesh.rotation.x += 0.0002;
+
+            // Parallax effect based on mouse
+            starMesh.rotation.y += mouseX * 0.00005;
+            starMesh.rotation.x += mouseY * 0.00005;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Handle Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+
+        // 2. 3D TILT EFFECT FOR CARDS (Vanilla JS Implementation)
+        const cards = document.querySelectorAll('.js-tilt');
+
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // Calculate rotation (center is 0)
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                // Reduced rotation for smaller grid cards to keep it subtle
+                const rotateX = ((y - centerY) / centerY) * -10; 
+                const rotateY = ((x - centerX) / centerX) * 10;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
+            });
+        });
+
+        // 3. SCROLL REVEAL ANIMATION
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        // Observe both cards and the projects section wrapper
+        document.querySelectorAll('.slide-card, .projects-section').forEach(el => {
+            observer.observe(el);
+        });
+
+        // 4. BOUNCE ANIMATION STYLE
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = `
+            @keyframes bounce {
+                0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+                40% {transform: translateY(-20px);}
+                60% {transform: translateY(-10px);}
+            }
+        `;
+        document.head.appendChild(styleSheet);
+
+    </script>
+</body>
+</html>
