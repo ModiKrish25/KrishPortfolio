@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ModiKrish | 3D Experience</title>
     <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💻</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%23a855f7%22/><text x=%2250%22 y=%2250%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 font-size=%2245%22 fill=%22white%22 text-anchor=%22middle%22 dy=%22.35em%22>MK</text></svg>">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -428,56 +428,120 @@
         .orange-theme .cube-face { border-color: #f59e0b; color: #f59e0b; box-shadow: 0 0 20px rgba(245, 158, 11, 0.2) inset; }
         .purple-theme .cube-face { border-color: #a855f7; color: #a855f7; box-shadow: 0 0 20px rgba(168, 85, 247, 0.2) inset; }
 
-        /* 8. TECH ARSENAL STYLES */
+        /* 8. TECH ARSENAL STYLES (ENHANCED NEON GLASS) */
         .tech-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 15px;
+            gap: 20px;
             width: 100%;
-            padding: 20px;
+            padding: 30px;
+            perspective: 1000px;
         }
 
         .tech-pill {
+            position: relative;
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 24px;
-            border-radius: 50px;
-            font-weight: 700;
+            gap: 12px;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 600;
             font-size: 16px;
-            color: white;
-            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             cursor: default;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transform: translateZ(20px);
+            transform-style: preserve-3d;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            overflow: hidden;
         }
 
+        .tech-pill i {
+            font-size: 24px;
+            transition: transform 0.4s ease;
+        }
+
+        /* Hover Effects */
         .tech-pill:hover {
-            transform: scale(1.1) translateZ(30px);
-            z-index: 10;
+            transform: translateY(-8px) scale(1.05) translateZ(20px);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.4);
         }
 
-        .tech-pill i { font-size: 20px; }
+        .tech-pill:hover i {
+            transform: scale(1.2) rotate(10deg);
+        }
 
-        /* Specific Tech Colors */
-        .bg-html { background-color: #e34f26; }
-        .bg-css { background-color: #2965f1; }
-        .bg-js { background-color: #f7df1e; color: #000; }
-        .bg-ts { background-color: #3178c6; }
-        .bg-react { background-color: #61dafb; color: #000; }
-        .bg-next { background-color: #000; border: 1px solid #333; }
-        .bg-tailwind { background-color: #14b8a6; }
-        .bg-node { background-color: #22c55e; }
-        .bg-express { background-color: #334155; }
-        .bg-mongo { background-color: #16a34a; }
-        .bg-mysql { background-color: #2563eb; }
-        .bg-postgres { background-color: #336791; }
-        .bg-python { background-color: #3b82f6; }
-        .bg-git { background-color: #ef4444; }
-        .bg-github { background-color: #171717; }
-        .bg-vercel { background-color: #000; border: 1px solid #fff; }
-        .bg-render { background-color: #4f46e5; }
+        /* Shine Effect */
+        .tech-pill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: 0.5s;
+        }
+        .tech-pill:hover::before {
+            left: 100%;
+        }
+
+        /* Specific Tech Colors (Neon Glows & Icon Colors) */
+        .bg-html i { color: #e34f26; }
+        .bg-html:hover { box-shadow: 0 0 25px rgba(227, 79, 38, 0.6); border-color: #e34f26; }
+
+        .bg-css i { color: #2965f1; }
+        .bg-css:hover { box-shadow: 0 0 25px rgba(41, 101, 241, 0.6); border-color: #2965f1; }
+
+        .bg-js i { color: #f7df1e; }
+        .bg-js:hover { box-shadow: 0 0 25px rgba(247, 223, 30, 0.6); border-color: #f7df1e; color: #fff; }
+
+        .bg-ts i { color: #3178c6; }
+        .bg-ts:hover { box-shadow: 0 0 25px rgba(49, 120, 198, 0.6); border-color: #3178c6; }
+
+        .bg-react i { color: #61dafb; }
+        .bg-react:hover { box-shadow: 0 0 25px rgba(97, 218, 251, 0.6); border-color: #61dafb; }
+
+        .bg-next i { color: #ffffff; }
+        .bg-next:hover { box-shadow: 0 0 25px rgba(255, 255, 255, 0.4); border-color: #fff; background: rgba(0,0,0,0.5); }
+
+        .bg-tailwind i { color: #38bdf8; }
+        .bg-tailwind:hover { box-shadow: 0 0 25px rgba(56, 189, 248, 0.6); border-color: #38bdf8; }
+
+        .bg-node i { color: #4ade80; }
+        .bg-node:hover { box-shadow: 0 0 25px rgba(74, 222, 128, 0.6); border-color: #4ade80; }
+
+        .bg-express i { color: #94a3b8; }
+        .bg-express:hover { box-shadow: 0 0 25px rgba(148, 163, 184, 0.6); border-color: #94a3b8; }
+
+        .bg-mongo i { color: #4db33d; }
+        .bg-mongo:hover { box-shadow: 0 0 25px rgba(77, 179, 61, 0.6); border-color: #4db33d; }
+
+        .bg-mysql i { color: #00758f; }
+        .bg-mysql:hover { box-shadow: 0 0 25px rgba(0, 117, 143, 0.6); border-color: #00758f; }
+
+        .bg-postgres i { color: #336791; }
+        .bg-postgres:hover { box-shadow: 0 0 25px rgba(51, 103, 145, 0.6); border-color: #336791; }
+
+        .bg-python i { color: #3776ab; }
+        .bg-python:hover { box-shadow: 0 0 25px rgba(55, 118, 171, 0.6); border-color: #3776ab; }
+
+        .bg-git i { color: #f1502f; }
+        .bg-git:hover { box-shadow: 0 0 25px rgba(241, 80, 47, 0.6); border-color: #f1502f; }
+
+        .bg-github i { color: #ffffff; }
+        .bg-github:hover { box-shadow: 0 0 25px rgba(255, 255, 255, 0.4); border-color: #fff; }
+
+        .bg-vercel i { color: #ffffff; }
+        .bg-vercel:hover { box-shadow: 0 0 25px rgba(255, 255, 255, 0.4); border-color: #fff; background: #000; }
+
+        .bg-render i { color: #46e3b7; }
+        .bg-render:hover { box-shadow: 0 0 25px rgba(70, 227, 183, 0.6); border-color: #46e3b7; }
+
 
         /* 9. MOBILE RESPONSIVENESS MEDIA QUERIES */
         @media (max-width: 900px) {
@@ -529,8 +593,9 @@
             }
             
             /* Tech Pills */
-            .tech-container { gap: 8px; }
-            .tech-pill { padding: 6px 14px; font-size: 12px; }
+            .tech-container { gap: 10px; }
+            .tech-pill { padding: 8px 16px; font-size: 14px; }
+            .tech-pill i { font-size: 18px; }
             
             /* Adjust desk size for mobile */
             .desk-scene { transform: scale(0.6) rotateX(-15deg) rotateY(20deg); }
@@ -603,6 +668,137 @@
             box-shadow: 0 0 5px #3b82f6;
         }
 
+        /* ========================
+           NEW 3D QUANTUM GYROSCOPE
+           ======================== */
+        .gyro-scene {
+            width: 200px;
+            height: 200px;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gyro-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            animation: gyro-float 6s ease-in-out infinite;
+        }
+
+        @keyframes gyro-float {
+            0%, 100% { transform: translateY(0px) rotateX(10deg); }
+            50% { transform: translateY(-20px) rotateX(10deg); }
+        }
+
+        /* Rings Common Style */
+        .gyro-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-style: preserve-3d;
+            border-radius: 50%;
+            border: 4px solid rgba(168, 85, 247, 0.1); /* Faint Purple */
+            border-left-color: #a855f7; /* Bright Purple */
+            border-right-color: #3b82f6; /* Bright Blue */
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+        }
+
+        /* Outer Ring */
+        .ring-outer {
+            width: 200px;
+            height: 200px;
+            margin-top: -100px;
+            margin-left: -100px;
+            animation: spin-gyro-1 8s linear infinite;
+        }
+
+        /* Middle Ring */
+        .ring-middle {
+            width: 160px;
+            height: 160px;
+            margin-top: -80px;
+            margin-left: -80px;
+            border: 3px solid rgba(59, 130, 246, 0.1);
+            border-top-color: #3b82f6;
+            border-bottom-color: #a855f7;
+            animation: spin-gyro-2 6s linear infinite reverse;
+        }
+
+        /* Inner Ring */
+        .ring-inner {
+            width: 120px;
+            height: 120px;
+            margin-top: -60px;
+            margin-left: -60px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-left-color: #fff;
+            animation: spin-gyro-3 4s linear infinite;
+        }
+
+        @keyframes spin-gyro-1 {
+            0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+            100% { transform: rotateX(360deg) rotateY(180deg) rotateZ(360deg); }
+        }
+        @keyframes spin-gyro-2 {
+            0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+            100% { transform: rotateX(180deg) rotateY(360deg) rotateZ(0deg); }
+        }
+        @keyframes spin-gyro-3 {
+            0% { transform: rotateX(0deg) rotateY(0deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg); }
+        }
+
+        /* Glowing Core */
+        .gyro-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle at 30% 30%, #fff, #3b82f6);
+            border-radius: 50%;
+            box-shadow: 0 0 30px #3b82f6, 0 0 60px #a855f7;
+            animation: core-beat 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes core-beat {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+        }
+
+        /* About Text Styling */
+        .about-text-styled {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #e2e8f0;
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 3px solid #a855f7;
+            min-height: 120px; /* Prevent layout shift during typing */
+        }
+
+        /* TYPEWRITER CURSOR */
+        .typewriter-cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1.2em;
+            background-color: #a855f7;
+            margin-left: 5px;
+            vertical-align: bottom;
+            animation: cursor-blink 1s infinite;
+        }
+
+        @keyframes cursor-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
         /* --- GEOMETRY DEFINITIONS --- */
 
         /* 1. TABLE TOP (200w x 10h x 100d) */
@@ -669,7 +865,7 @@
                 </h1>
                 
                 <p style="font-size: 24px; color: #fff;">Full Stack Developer</p>
-                <p>Building immersive digital experiences with Code, AI & Blockchain.</p>
+                <p>Building immersive digital experiences with Code, AI .</p>
                 <div style="margin-top: 30px;">
                     <a href="#projects" class="cta-btn">View Work <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
@@ -687,20 +883,37 @@
         </div>
 
         <!-- Slide 2: About -->
-        <div id="about" class="slide-card js-tilt">
+        <div id="about" class="slide-card js-tilt" style="background: rgba(30, 41, 59, 0.6); box-shadow: 0 0 40px rgba(0,0,0,0.4);">
             <div class="content-side">
                 <h2>About <span class="highlight">Me</span></h2>
-                <p>I am a passionate developer transforming complex problems into elegant, 3D solutions. I specialize in building scalable web applications and integrating cutting-edge technologies.</p>
-                <ul style="list-style: none; margin-top: 20px; margin-bottom: 30px;">
-                    <li><i class="fa-solid fa-check highlight"></i> Modern Web Apps</li>
-                    <li><i class="fa-solid fa-check highlight"></i> AI & Machine Learning</li>
-                    <li><i class="fa-solid fa-check highlight"></i> Decentralized Tech</li>
+                <!-- Added new styling container for better look -->
+                <div class="about-text-styled">
+                    <p id="about-text" style="margin-bottom: 0;">
+                        <!-- Text will be typed here by JS -->
+                    </p>
+                </div>
+                <ul style="list-style: none; margin-top: 30px; margin-bottom: 30px;">
+                    <li style="font-size: 18px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-solid fa-code highlight" style="font-size: 20px;"></i> Modern Web Apps
+                    </li>
+                    <li style="font-size: 18px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-solid fa-brain highlight" style="font-size: 20px;"></i> AI & Machine Learning
+                    </li>
+                    <!-- <li style="font-size: 18px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-brands fa-ethereum highlight" style="font-size: 20px;"></i>
+                    </li> -->
                 </ul>
                 <a href="#contact" class="cta-btn cta-btn-alt">Contact Me</a>
             </div>
             <div class="visual-side">
-                <div style="font-size: 100px; color: #cbd5e1; transform: rotateZ(10deg);">
-                    <i class="fa-regular fa-user"></i>
+                <!-- NEW 3D QUANTUM GYROSCOPE VISUAL -->
+                <div class="gyro-scene">
+                    <div class="gyro-wrapper">
+                        <div class="gyro-ring ring-outer"></div>
+                        <div class="gyro-ring ring-middle"></div>
+                        <div class="gyro-ring ring-inner"></div>
+                        <div class="gyro-core"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -761,7 +974,7 @@
                             <h2>CoachAI</h2>
                             <h3 style="color: #10b981;">Intelligent Assistant</h3>
                             <p>AI-powered personal coaching providing tailored advice.</p>
-                            <p class="highlight" style="color: #10b981;">Python • TensorFlow • React</p>
+                            <p class="highlight" style="color: #10b981;">ReactJS • NodeJS • MongoDB</p>
                             <a href="https://coachai-project.vercel.app/" target="_blank" class="cta-btn" style="background: rgba(16, 185, 129, 0.1); border-color: #10b981; margin-top: 20px;">View Live</a>
                         </div>
                     </div>
@@ -788,7 +1001,7 @@
                             <h2>Crypto_Master</h2>
                             <h3 style="color: #f59e0b;">Market Dashboard</h3>
                             <p>Tracking for cryptocurrency prices and trends.</p>
-                            <p class="highlight" style="color: #f59e0b;">Web3 • D3.js • Blockchain</p>
+                            <p class="highlight" style="color: #f59e0b;">CSS • Three.js • API fetch</p>
                             <a href="https://crypto-mastercoin.vercel.app/" target="_blank" class="cta-btn" style="background: rgba(245, 158, 11, 0.1); border-color: #f59e0b; margin-top: 20px;">View Live</a>
                         </div>
                     </div>
@@ -807,9 +1020,9 @@
                 <div class="tech-pill bg-html"><i class="fa-brands fa-html5"></i> HTML</div>
                 <div class="tech-pill bg-css"><i class="fa-brands fa-css3-alt"></i> CSS</div>
                 <div class="tech-pill bg-js"><i class="fa-brands fa-js"></i> JavaScript</div>
-                <div class="tech-pill bg-ts"><i class="fa-brands fa-js-square"></i> TypeScript</div>
+                <!-- <div class="tech-pill bg-ts"><i class="fa-brands fa-js-square"></i> TypeScript</div> -->
                 <div class="tech-pill bg-react"><i class="fa-brands fa-react"></i> ReactJS</div>
-                <div class="tech-pill bg-next"><i class="fa-solid fa-n"></i> Next.js</div>
+                <!-- <div class="tech-pill bg-next"><i class="fa-solid fa-n"></i> Next.js</div> -->
                 <div class="tech-pill bg-tailwind"><i class="fa-solid fa-wind"></i> Tailwind CSS</div>
                 <div class="tech-pill bg-node"><i class="fa-brands fa-node-js"></i> NodeJS</div>
                 <div class="tech-pill bg-express"><i class="fa-solid fa-server"></i> ExpressJS</div>
@@ -979,6 +1192,11 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
+                    
+                    // Trigger Typewriter Effect if it's the About section
+                    if (entry.target.id === 'about') {
+                        startTypewriter();
+                    }
                 }
             });
         }, { threshold: 0.1 });
@@ -986,6 +1204,33 @@
         document.querySelectorAll('.slide-card, .projects-section').forEach(el => {
             observer.observe(el);
         });
+
+        // 5. TYPEWRITER EFFECT
+        const aboutTextFull = "I am a passionate developer transforming complex problems into elegant, 3D solutions. I specialize in building scalable web applications and integrating cutting-edge technologies.";
+        const aboutTextElement = document.getElementById('about-text');
+        let typeWriterStarted = false;
+
+        function startTypewriter() {
+            if (typeWriterStarted || !aboutTextElement) return;
+            typeWriterStarted = true;
+            
+            aboutTextElement.innerHTML = '<span class="typewriter-cursor"></span>';
+            
+            let i = 0;
+            const speed = 20; // Typing speed in ms
+
+            function type() {
+                if (i < aboutTextFull.length) {
+                    // Remove cursor, add char, add cursor back
+                    let currentText = aboutTextFull.substring(0, i + 1);
+                    aboutTextElement.innerHTML = currentText + '<span class="typewriter-cursor"></span>';
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            
+            type();
+        }
 
         // 4. INTERACTIVE DESK LOGIC
         const contactSection = document.getElementById('contact');
